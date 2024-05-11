@@ -7,7 +7,7 @@ declare global {
   namespace Express {
     interface Request {
       userId: string;
-      auth0Id: String;
+      auth0Id: string;
     }
   }
 }
@@ -25,12 +25,11 @@ export const jwtParse = async (
 ) => {
   const { authorization } = req.headers;
 
-  //Space in "Bearer " in order to generate the auth token. without the space the field is invalid.
   if (!authorization || !authorization.startsWith("Bearer ")) {
     return res.sendStatus(401);
   }
 
-  // again gap in the " " in order to get the token.
+  // Bearer lshdflshdjkhvjkshdjkvh34h5k3h54jkh
   const token = authorization.split(" ")[1];
 
   try {

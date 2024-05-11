@@ -57,4 +57,8 @@ const updateCurrentUser = async (req: Request, res: Response) => {
   }
 };
 
-export default { getCurrentUser, createCurrentUser, updateCurrentUser };
+export default {
+  getCurrentUser,
+  createCurrentUser,
+  updateCurrentUser,
+};
