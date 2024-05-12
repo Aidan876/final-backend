@@ -2,6 +2,7 @@ import express from "express";
 import { jwtCheck, jwtParse } from "../middleware/auth";
 import OrderController from "../controllers/OrderController";
 
+//defines routes for express in order to handle provided endpoints
 const router = express.Router();
 
 router.get("/", jwtCheck, jwtParse, OrderController.getMyOrders);

@@ -11,7 +11,7 @@ declare global {
     }
   }
 }
-
+//This function forces authorization and retrive user information from the payload.
 export const jwtCheck = auth({
   audience: process.env.AUTH0_AUDIENCE,
   issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
@@ -29,7 +29,6 @@ export const jwtParse = async (
     return res.sendStatus(401);
   }
 
-  // Bearer lshdflshdjkhvjkshdjkvh34h5k3h54jkh
   const token = authorization.split(" ")[1];
 
   try {

@@ -1,6 +1,7 @@
 import { body, validationResult } from "express-validator";
 import { Request, Response, NextFunction } from "express";
 
+//checks for validation errors if it finds one returns 400 bad request response.
 const handleValidationErrors = async (
   req: Request,
   res: Response,

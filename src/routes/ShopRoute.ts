@@ -2,6 +2,7 @@ import express from "express";
 import { param } from "express-validator";
 import ShopController from "../controllers/ShopController";
 
+//this snippet defines routes with Express for fetching shop information
 const router = express.Router();
 
 router.get(
