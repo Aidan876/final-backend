@@ -1,17 +1,17 @@
 import express from "express";
 import { param } from "express-validator";
-import RestaurantController from "../controllers/RestaurantController";
+import ShopController from "../controllers/ShopController";
 
 const router = express.Router();
 
 router.get(
-  "/:restaurantId",
-  param("restaurantId")
+  "/:shopId",
+  param("shopId")
     .isString()
     .trim()
     .notEmpty()
-    .withMessage("RestaurantId paramenter must be a valid string"),
-  RestaurantController.getRestaurant
+    .withMessage("ShopId paramenter must be a valid string"),
+  ShopController.getShop
 );
 
 router.get(
@@ -21,7 +21,7 @@ router.get(
     .trim()
     .notEmpty()
     .withMessage("City paramenter must be a valid string"),
-  RestaurantController.searchRestaurant
+  ShopController.searchShop
 );
 
 export default router;

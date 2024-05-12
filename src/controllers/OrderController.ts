@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { Request, Response } from "express";
-import Restaurant, { MenuItemType } from "../models/restaurant";
+import Shop, { MenuItemsType } from "../models/shop";
 import Order from "../models/order";
 
 const STRIPE = new Stripe(process.env.STRIPE_API_KEY as string);
@@ -10,7 +10,7 @@ const STRIPE_ENDPOINT_SECRET = process.env.STRIPE_WEBHOOK_SECRET as string;
 const getMyOrders = async (req: Request, res: Response) => {
   try {
     const orders = await Order.find({ user: req.userId })
-      .populate("restaurant")
+      .populate("shop")
       .populate("user");
 
     res.json(orders);
@@ -32,7 +32,7 @@ type CheckoutSessionRequest = {
     addressLine1: string;
     city: string;
   };
-  restaurantId: string;
+  shopId: string;
 };
 
 const stripeWebhookHandler = async (req: Request, res: Response) => {
@@ -70,16 +70,14 @@ const createCheckoutSession = async (req: Request, res: Response) => {
   try {
     const checkoutSessionRequest: CheckoutSessionRequest = req.body;
 
-    const restaurant = await Restaurant.findById(
-      checkoutSessionRequest.restaurantId
-    );
+    const shop = await Shop.findById(checkoutSessionRequest.shopId);
 
-    if (!restaurant) {
-      throw new Error("Restaurant not found");
+    if (!shop) {
+      throw new Error("Shop not found");
     }
 
     const newOrder = new Order({
-      restaurant: restaurant,
+      shop: shop,
       user: req.userId,
       status: "placed",
       deliveryDetails: checkoutSessionRequest.deliveryDetails,
@@ -87,16 +85,13 @@ const createCheckoutSession = async (req: Request, res: Response) => {
       createdAt: new Date(),
     });
 
-    const lineItems = createLineItems(
-      checkoutSessionRequest,
-      restaurant.menuItems
-    );
+    const lineItems = createLineItems(checkoutSessionRequest, shop.menuItems);
 
     const session = await createSession(
       lineItems,
       newOrder._id.toString(),
-      restaurant.deliveryPrice,
-      restaurant._id.toString()
+      shop.deliveryPrice,
+      shop._id.toString()
     );
 
     if (!session.url) {
@@ -113,7 +108,7 @@ const createCheckoutSession = async (req: Request, res: Response) => {
 
 const createLineItems = (
   checkoutSessionRequest: CheckoutSessionRequest,
-  menuItems: MenuItemType[]
+  menuItems: MenuItemsType[]
 ) => {
   const lineItems = checkoutSessionRequest.cartItems.map((cartItem) => {
     const menuItem = menuItems.find(
@@ -145,7 +140,7 @@ const createSession = async (
   lineItems: Stripe.Checkout.SessionCreateParams.LineItem[],
   orderId: string,
   deliveryPrice: number,
-  restaurantId: string
+  shopId: string
 ) => {
   const sessionData = await STRIPE.checkout.sessions.create({
     line_items: lineItems,
@@ -164,10 +159,10 @@ const createSession = async (
     mode: "payment",
     metadata: {
       orderId,
-      restaurantId,
+      shopId,
     },
     success_url: `${FRONTEND_URL}/order-status?success=true`,
-    cancel_url: `${FRONTEND_URL}/detail/${restaurantId}?cancelled=true`,
+    cancel_url: `${FRONTEND_URL}/detail/${shopId}?cancelled=true`,
   });
 
   return sessionData;

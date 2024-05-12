@@ -1,8 +1,8 @@
 import express from "express";
 import multer from "multer";
-import MyRestaurantController from "../controllers/MyRestaurantController";
+import MyShopController from "../controllers/MyShopController";
 import { jwtCheck, jwtParse } from "../middleware/auth";
-import { validateMyRestaurantRequest } from "../middleware/validation";
+import { validateMyShopRequest } from "../middleware/validation";
 
 const router = express.Router();
 
@@ -14,38 +14,33 @@ const upload = multer({
   },
 });
 
-router.get(
-  "/order",
-  jwtCheck,
-  jwtParse,
-  MyRestaurantController.getMyRestaurantOrders
-);
+router.get("/order", jwtCheck, jwtParse, MyShopController.getMyShopOrders);
 
 router.patch(
   "/order/:orderId/status",
   jwtCheck,
   jwtParse,
-  MyRestaurantController.updateOrderStatus
+  MyShopController.updateOrderStatus
 );
 
-router.get("/", jwtCheck, jwtParse, MyRestaurantController.getMyRestaurant);
+router.get("/", jwtCheck, jwtParse, MyShopController.getMyShop);
 
 router.post(
   "/",
   upload.single("imageFile"),
-  validateMyRestaurantRequest,
+  validateMyShopRequest,
   jwtCheck,
   jwtParse,
-  MyRestaurantController.createMyRestaurant
+  MyShopController.createMyShop
 );
 
 router.put(
   "/",
   upload.single("imageFile"),
-  validateMyRestaurantRequest,
+  validateMyShopRequest,
   jwtCheck,
   jwtParse,
-  MyRestaurantController.updateMyRestaurant
+  MyShopController.updateMyShop
 );
 
 export default router;
